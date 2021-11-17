@@ -17,13 +17,21 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import com.example.uebungenfd.ui.theme.UebungenFDTheme
 import com.example.uebungenfd.viewModel.MainViewModel
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
 
 //library implementation hinzufügen des links der library in gradle scripts build.gradle MODULE
@@ -34,15 +42,64 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    sealed class ScreenData(val route: String, @StringRes val resourceId: Int) {
+        object LoremIpsum : ScreenData("lorem", R.string.lorem)
+        object Settings : ScreenData("settings", R.string.settings)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val navController = rememberNavController()
             UebungenFDTheme {
-                MainContent()
+                Surface(color = MaterialTheme.colors.background) {
+                    Scaffold(bottomBar = {
+                        BottomNavigation {
+                            val navBackStackEntry by navController.currentBackStackEntryAsState()
+                            val currentDestination = navBackStackEntry?.destination
+                            listOf(ScreenData.LoremIpsum, ScreenData.Settings).forEach { item ->
+                                BottomNavigationItem(
+                                    icon = { Icon(item.icon, contentDescription = "") },
+                                    label = {
+                                        Text(
+                                            text = stringResource(
+                                                id = item.resourceId
+                                            )
+                                        )
+                                    },
+                                    selected = currentDestination?.hierarchy?.any {},
+                                    onClick = {
+                                        navController.navigate(item.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    ) { innerPadding ->
+                        NavHost(
+                            navController, startDestination = ScreenData.LoremIpsum.route,
+                            Modifier.padding(innerPadding)
+                        ) {
+                            composable(ScreenData.LoremIpsum.route) {
+                                MainContent(navController)
+                            }
+                            composable(ScreenData.Settings.route) {
+                                SettingContent(navController)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
 
     @Composable
     fun FullScreenDialog(text: String, onClose: () -> Unit) {
@@ -51,7 +108,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MainContent() {
-
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -82,9 +138,12 @@ class MainActivity : ComponentActivity() {
                     try {
                         viewModel.loadParagraphs(paragraphValue.toInt())
                         isLoading = true;
-                    }
-                    catch (exception: NumberFormatException) {
-                        Toast.makeText(applicationContext, "Invalid input!", Toast.LENGTH_SHORT).show()
+                    } catch (exception: NumberFormatException) {
+                        Toast.makeText(
+                            applicationContext,
+                            "Invalid input!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                 },
@@ -136,7 +195,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 /*      TEST PREVIEW ETC
 @Composable

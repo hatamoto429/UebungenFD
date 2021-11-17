@@ -1,10 +1,19 @@
 package com.example.uebungenfd.ui.theme
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import java.lang.reflect.Modifier
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -41,4 +50,13 @@ fun UebungenFDTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
         shapes = Shapes,
         content = content
     )
+
+
+    @Composable
+    fun UebungenFD(content: @Composable () -> Unit) {
+        val navController = rememberNavController()
+        UebungenFD {
+
+        }
+    }
 }
