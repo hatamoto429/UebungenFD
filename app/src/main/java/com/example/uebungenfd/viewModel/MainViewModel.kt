@@ -14,6 +14,8 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
 
     private val api = LoremIpsumApi(ktorHttpClient)
 
+    private var lengthValueApi = ""
+
     fun loadParagraphs(count: Int) {
 
         //launch nicht in UI feld - asynchron
@@ -27,5 +29,12 @@ class MainViewModel (application: Application): AndroidViewModel(application) {
     fun reset() {
         internalLoremIpsumText.postValue("")
     }
+
+    fun setLengthValue() {
+
+
+
+    }
+
 
 }

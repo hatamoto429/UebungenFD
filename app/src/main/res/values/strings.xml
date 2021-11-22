@@ -2,8 +2,8 @@
 
 <resources>
     <string name="app_name">UebungenFD</string>
-    <string name="lorem">UebungenFD</string>
-    <string name="settings">UebungenFD</string>
+    <string name="lorem">LoremIpsum</string>
+    <string name="settings">Settings</string>
 
 
 
