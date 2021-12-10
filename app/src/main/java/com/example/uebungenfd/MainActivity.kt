@@ -141,14 +141,12 @@ class MainActivity : ComponentActivity() {
         ) {
             LengthValue.values().forEach { label ->
                 DropdownMenuItem(onClick = {
-                    selectedText = label
+                    selectedText = label.toString()
                 }) {
-                    Text(text = label)
+                   // Text(text = label)
                 }
             }
         }
-
-
     }
 
 
